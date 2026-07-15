@@ -12,26 +12,38 @@ not a mockup to reimplement in another framework. Your job in Claude Code is to
 ## What's in this package
 
 ```
-design_handoff_portfolio/
+portfolio-website/
 ├── README.md            ← you are here
 ├── src/                 ← EDITABLE SOURCE (edit these)
 │   ├── June Powell - Landing.dc.html    ← the cover / landing page
 │   ├── June Powell Portfolio.dc.html    ← the main portfolio page
 │   ├── support.js                       ← runtime that renders .dc.html (do not edit)
 │   └── assets/                          ← all photos + logos
-└── dist/                ← DEPLOYABLE FOLDER (Option A below — copy of src/, renamed)
-    ├── index.html       ← landing page   (site opens here)
-    ├── portfolio.html   ← portfolio page
-    ├── support.js
-    └── assets/
+├── index.html            ← DEPLOYED landing page (site opens here) — repo root,
+├── portfolio.html        ← DEPLOYED portfolio page   because GitHub Pages is set
+├── support.js             ← copy of src/support.js     to serve `main` / root
+└── assets/                ← copy of src/assets/
 ```
 
-`dist/` used to hold single-file bundles produced by an internal tool not available
-in Claude Code (see "Option B" below). Claude Code can't reproduce that exact
-gzip+base64 packed format, so `dist/` was regenerated as a plain **Option A**
-folder instead: `src/`'s two `.dc.html` files renamed to `index.html` /
-`portfolio.html`, plus `support.js` and `assets/` copied alongside them. Deploy
-`dist/`'s contents as-is (see "Push to GitHub Pages" below) — no bundler needed.
+GitHub Pages serves this repo's `main` branch from the **root**, so the deployed
+files have to live at the top level — not in a subfolder. `index.html` /
+`portfolio.html` at root are `src/`'s two `.dc.html` files renamed (this is
+"Option A" below); `support.js` and `assets/` are plain copies of `src/`'s.
+
+There used to be a `dist/` folder holding single-file bundles produced by an
+internal tool not available in Claude Code (see "Option B" below) — Claude Code
+can't reproduce that exact gzip+base64 packed format, so it was replaced with
+the plain root-level copies described above.
+
+**When you edit `src/`, remember to also re-copy into the root files** (or ask
+Claude Code to do it) — they're plain copies, not symlinks, so they don't
+update automatically:
+```
+cp "src/June Powell - Landing.dc.html" index.html
+cp "src/June Powell Portfolio.dc.html" portfolio.html
+cp src/support.js support.js
+cp -R src/assets assets
+```
 
 ---
 
@@ -72,22 +84,20 @@ If you rename the deployed files, update these links to match.
 GitHub Pages serves plain files. The `.dc.html` sources depend on `support.js` +
 `assets/` sitting alongside them, so you have two deploy options:
 
-### Option A — Deploy the folder as-is (simplest for Claude Code)
-Commit `support.js`, `assets/`, and the two `.dc.html` files to the repo, renaming:
-- `June Powell - Landing.dc.html` → `index.html`
-- `June Powell Portfolio.dc.html` → `portfolio.html`
+### Option A — Deploy the folder as-is (what's used now)
+Commit `support.js`, `assets/`, and the two `.dc.html` files (renamed to
+`index.html` / `portfolio.html`) at the **repo root**, since Pages serves
+`main` from root. Because they load `./support.js` and `assets/…` by relative
+path, they render fine as long as those files are alongside them. Internal
+links already use the deployed names (`index.html` / `portfolio.html`).
 
-Because they load `./support.js` and `assets/…` by relative path, they render on
-Pages as long as those files are in the same repo. Update the internal links to use
-the new names (`index.html` / `portfolio.html`).
-
-### Option B — Ship single self-contained files (what's deployed now)
-The `dist/` files have `support.js`, every image, and all CSS **inlined into one
-HTML file each** — no external dependencies, nothing else to upload. This is how the
-site is currently deployed. Regenerating these bundles was done with an internal
-tool not available in Claude Code; to reproduce it there, write a small Node script
-that inlines `support.js` and base64-encodes each `assets/*` reference into the HTML,
-or simply use Option A instead.
+### Option B — Ship single self-contained files (previously deployed)
+A single-file-per-page bundle with `support.js`, every image, and all CSS
+**inlined into one HTML file each** — no external dependencies. This is how the
+site was deployed before; regenerating those bundles was done with an internal
+tool not available in Claude Code. To reproduce it here, you'd need to write a
+Node script that inlines `support.js` and base64-encodes each `assets/*`
+reference into the HTML — otherwise just use Option A.
 
 ### Push to GitHub Pages
 ```
