@@ -19,13 +19,19 @@ design_handoff_portfolio/
 │   ├── June Powell Portfolio.dc.html    ← the main portfolio page
 │   ├── support.js                       ← runtime that renders .dc.html (do not edit)
 │   └── assets/                          ← all photos + logos
-└── dist/                ← DEPLOYABLE BUNDLES (what's on GitHub now)
-    ├── index.html       ← bundled landing page  (site opens here)
-    └── portfolio.html   ← bundled portfolio page
+└── dist/                ← DEPLOYABLE FOLDER (Option A below — copy of src/, renamed)
+    ├── index.html       ← landing page   (site opens here)
+    ├── portfolio.html   ← portfolio page
+    ├── support.js
+    └── assets/
 ```
 
-The **two `dist/` files are exactly what is deployed today**. `index.html` is the
-cover; it links to `portfolio.html`.
+`dist/` used to hold single-file bundles produced by an internal tool not available
+in Claude Code (see "Option B" below). Claude Code can't reproduce that exact
+gzip+base64 packed format, so `dist/` was regenerated as a plain **Option A**
+folder instead: `src/`'s two `.dc.html` files renamed to `index.html` /
+`portfolio.html`, plus `support.js` and `assets/` copied alongside them. Deploy
+`dist/`'s contents as-is (see "Push to GitHub Pages" below) — no bundler needed.
 
 ---
 

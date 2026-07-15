@@ -332,6 +332,7 @@ class Component extends DCLogic {
     this.sublineRef = React.createRef();
     this.appleRef = React.createRef();
     this.W = 96;
+    this._sceneRan = false;
   }
 
   componentDidMount() {
@@ -343,8 +344,22 @@ class Component extends DCLogic {
       if (cta) { cta.style.opacity = '0'; cta.style.transform = 'translateY(12px)'; cta.style.pointerEvents = 'none'; }
       const sub = this.sublineRef.current;
       if (sub) { sub.style.opacity = '0'; sub.style.transform = 'translateY(8px)'; }
-      this._t = setTimeout(() => this.runScene(), 2400);
+      // The walk-to-tree scene is fixed-position and choreographed for a page that
+      // fits in one viewport. When the copy is tall enough to need scrolling (small
+      // or short windows), that fixed scene would sit on top of scrolled-to content
+      // instead, so skip the scene there and just reveal the CTA in place.
+      this._t = setTimeout(() => {
+        const fitsViewport = document.documentElement.scrollHeight <= window.innerHeight + 20;
+        if (fitsViewport) this.runScene(); else this.revealStatic();
+      }, 2400);
     }
+  }
+
+  revealStatic() {
+    const cta = this.ctaRef.current;
+    if (cta) { cta.style.opacity = '1'; cta.style.transform = 'translateY(0)'; cta.style.pointerEvents = 'auto'; }
+    const sub = this.sublineRef.current;
+    if (sub) { sub.style.opacity = '1'; sub.style.transform = 'translateY(0)'; }
   }
 
   componentWillUnmount() {
@@ -382,6 +397,7 @@ class Component extends DCLogic {
   groundY() { return window.innerHeight - 188; }
 
   runScene() {
+    this._sceneRan = true;
     const frame = this.portraitRef.current;
     const walker = this.walkerRef.current;
     if (!frame || !walker) return;
@@ -525,7 +541,7 @@ class Component extends DCLogic {
     // When she's invited you in, she gets up and strolls off to the right first.
     const walker = this.walkerRef.current;
     const svg = walker ? walker.querySelector('svg') : null;
-    if (!walker || !svg || this._exiting) return; // let the href navigate normally if not ready
+    if (!this._sceneRan || !walker || !svg || this._exiting) return; // let the href navigate normally if the scene never ran
     if (e) e.preventDefault();
     this._exiting = true;
     if (this._raf) cancelAnimationFrame(this._raf);
