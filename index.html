@@ -28,6 +28,8 @@
   @keyframes cArmH{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(7deg);}}
   @keyframes cBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
   @keyframes breathe{0%,100%{transform:translateY(0);}50%{transform:translateY(-2px);}}
+  @keyframes hop{0%{transform:translateY(0);}35%{transform:translateY(-24px);}55%{transform:translateY(-24px);}75%{transform:translateY(0) scaleY(0.9);}100%{transform:translateY(0) scaleY(1);}}
+  .toon-hopping{animation:hop 0.55s cubic-bezier(0.34,1.4,0.5,1);}
   .toon .c-leg-l,.toon .c-leg-r,.toon .c-arm-l,.toon .c-arm-r,.toon .c-bob{transition:transform 0.4s ease;}
   .toon.walking .c-bob{animation:cBob 0.5s ease-in-out infinite;}
   .toon.walking .c-leg-l{animation:cLegF 0.5s ease-in-out infinite;}
@@ -145,8 +147,8 @@
 
   <div aria-hidden="true" style="position:fixed;left:0;right:0;bottom:0;height:20vh;min-height:120px;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(122,163,92,0) 0%,rgba(123,163,82,0.5) 55%,#7BA352 78%,#5E8540 100%);"></div>
 
-  <div class="scene-tree" style="position:absolute;left:clamp(-24px,1vw,24px);bottom:0;z-index:1;opacity:0;transition:opacity 1.1s ease;pointer-events:none;">
-    <svg class="tree-svg" viewBox="0 0 320 400" style="width:clamp(120px,12vw,165px);height:auto;display:block;overflow:visible;" xmlns="http://www.w3.org/2000/svg">
+  <div ref="{{ treeWrapRef }}" class="scene-tree" style="position:fixed;left:6px;bottom:0;z-index:1;opacity:0;transition:opacity 1.1s ease;pointer-events:none;">
+    <svg class="tree-svg" viewBox="0 0 320 400" style="width:clamp(85px,9vw,125px);height:auto;display:block;overflow:visible;" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="bark" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="#8a6638"></stop>
@@ -214,18 +216,18 @@
     </svg>
   </div>
 
-  <a ref="{{ bubbleRef }}" href="portfolio.html" onClick="{{ enter }}" class="sans" style="position:absolute;left:0;top:0;z-index:17;opacity:0;transform:translateY(8px);transition:opacity 0.5s ease,transform 0.5s cubic-bezier(0.34,1.56,0.64,1);display:inline-flex;align-items:center;gap:8px;background:#F1E9D6;color:#1B3327;font-size:13px;font-weight:600;letter-spacing:0.01em;padding:9px 15px;border-radius:14px;box-shadow:0 10px 22px -10px rgba(0,0,0,0.6);pointer-events:none;white-space:nowrap;">
+  <a ref="{{ bubbleRef }}" href="portfolio.html" onClick="{{ enter }}" class="sans" style="position:fixed;left:0;top:0;z-index:1;opacity:0;transform:translateY(8px);transition:opacity 0.5s ease,transform 0.5s cubic-bezier(0.34,1.56,0.64,1);display:inline-flex;align-items:center;gap:8px;background:#F1E9D6;color:#1B3327;font-size:13px;font-weight:600;letter-spacing:0.01em;padding:9px 15px;border-radius:14px;box-shadow:0 10px 22px -10px rgba(0,0,0,0.6);pointer-events:none;white-space:nowrap;">
     Come on in <span style="font-size:15px;">→</span>
   </a>
 
-  <div ref="{{ appleRef }}" style="position:absolute;left:0;top:0;z-index:16;width:16px;height:16px;opacity:0;pointer-events:none;will-change:transform;">
+  <div ref="{{ appleRef }}" style="position:fixed;left:0;top:0;z-index:1;width:16px;height:16px;opacity:0;pointer-events:none;will-change:transform;">
     <div style="width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#E0574A,#BE3A2E 60%,#8E2A20);box-shadow:0 1px 3px rgba(0,0,0,0.45);"></div>
     <span style="position:absolute;top:-3px;left:7px;width:2px;height:5px;background:#5b3a22;border-radius:1px;"></span>
     <span style="position:absolute;top:-2px;left:9px;width:7px;height:4px;background:#5F824F;border-radius:60% 0 60% 0;"></span>
   </div>
 
-  <div ref="{{ walkerRef }}" style="position:absolute;left:0;top:0;z-index:16;width:96px;opacity:0;transition:opacity 0.35s ease;pointer-events:none;will-change:transform;">
-    <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+  <div ref="{{ walkerRef }}" style="position:fixed;left:0;top:0;z-index:1;width:96px;opacity:0;transition:opacity 0.35s ease;pointer-events:none;will-change:transform;">
+    <div ref="{{ toonWrapRef }}" onClick="{{ hop }}" style="position:relative;display:flex;flex-direction:column;align-items:center;cursor:pointer;pointer-events:auto;">
       <svg class="toon" width="92" viewBox="0 0 120 210" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible;transform-origin:center bottom;">
         <defs>
           <linearGradient id="cHair" x1="0" y1="0" x2="1" y2="1">
@@ -332,8 +334,11 @@ class Component extends DCLogic {
     this.appleRef = React.createRef();
     this.wrapperRef = React.createRef();
     this.footerLinksRef = React.createRef();
+    this.toonWrapRef = React.createRef();
+    this.treeWrapRef = React.createRef();
     this.W = 96;
     this._sceneRan = false;
+    this._restX = 118;
   }
 
   componentDidMount() {
@@ -345,31 +350,43 @@ class Component extends DCLogic {
       if (cta) { cta.style.opacity = '0'; cta.style.transform = 'translateY(12px)'; cta.style.pointerEvents = 'none'; }
       const sub = this.sublineRef.current;
       if (sub) { sub.style.opacity = '0'; sub.style.transform = 'translateY(8px)'; }
-      this.reserveGroundSpace();
+      this.positionSideScene();
+      this._onResizeScene = () => this.positionSideScene();
+      window.addEventListener('resize', this._onResizeScene);
       this._t = setTimeout(() => this.runScene(), 2400);
     }
   }
 
-  // The character/tree land right after the footer links, in document-flow
-  // space (see runScene/groundY) rather than pinned to the viewport, so they
-  // never overlap scrolled-to content. But that space has to actually exist:
-  // on a short window the footer already sits near the viewport bottom with
-  // no room left for the tree. Reserve only the shortfall, so pages that
-  // already had room (most desktop windows) aren't pushed into extra scroll.
-  reserveGroundSpace() {
-    const wrapper = this.wrapperRef.current;
+  // She's fixed to the viewport (not the document), so she's always visible
+  // without scrolling — on a short "cropped" window or a laptop screen, not
+  // just a tall one. To keep her from ever sitting on top of the CTA/footer
+  // text, measure the actual rendered left edge of those specific elements
+  // (not just the outer padded column, which is often much wider than what's
+  // really rendered inside it — e.g. on mobile the column nearly fills the
+  // screen while the centered button/links sit well inside it) and tuck her
+  // into whatever margin genuinely exists beside them. On the narrowest
+  // screens there may be no margin at all; z-index keeps her behind the
+  // text in that case (see markup) so she can never make it unreadable —
+  // she just becomes partially tucked behind it instead.
+  positionSideScene() {
+    const tree = this.treeWrapRef.current;
+    const cta = this.ctaRef.current;
     const footer = this.footerLinksRef.current;
-    const tree = document.querySelector('.scene-tree');
-    if (!wrapper || !footer || !tree) return;
-    const slackBelow = window.innerHeight - footer.getBoundingClientRect().bottom;
-    const treeHeight = tree.offsetHeight || 340;
-    const needed = Math.max(0, treeHeight + 2 - slackBelow);
-    if (needed > 0) wrapper.style.paddingBottom = needed + 'px';
+    if (!tree || !cta) return;
+    const treeWidth = tree.offsetWidth || 100;
+    const ctaLeft = cta.getBoundingClientRect().left;
+    const footerLeft = footer ? footer.getBoundingClientRect().left : ctaLeft;
+    const safeLeft = Math.min(ctaLeft, footerLeft);
+    const treeLeft = Math.max(4, safeLeft - treeWidth - 14);
+    tree.style.left = treeLeft + 'px';
+    this._restX = Math.max(4, treeLeft + treeWidth * 0.38 - this.W / 2);
   }
 
   componentWillUnmount() {
     if (this._t) clearTimeout(this._t);
     if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._hopT) clearTimeout(this._hopT);
+    window.removeEventListener('resize', this._onResizeScene);
   }
 
   setupAudio() {
@@ -399,7 +416,7 @@ class Component extends DCLogic {
     if (a.paused) a.play().catch(() => {}); else a.pause();
   }
 
-  groundY() { return document.body.scrollHeight - 188; }
+  groundY() { return window.innerHeight - 188; }
 
   runScene() {
     this._sceneRan = true;
@@ -412,12 +429,10 @@ class Component extends DCLogic {
     if (!art || !svg) return;
 
     // Stand the character in front of the frame, hands up on the seam, ready to tear.
-    // The character/tree/bubble are document-positioned (not viewport-fixed) so they
-    // scroll away with the page once she's landed, instead of sitting pinned over
-    // whatever content happens to scroll underneath — so convert this viewport-relative
-    // rect into document coordinates by adding the current scroll offset.
+    // She's viewport-fixed (see positionSideScene), so these coordinates are
+    // already in the right frame of reference — no scroll offset needed.
     const r = art.getBoundingClientRect();
-    const feetY = r.top + r.height * 0.9 + window.scrollY;
+    const feetY = r.top + r.height * 0.9;
     const startX = r.left + r.width / 2 - this.W / 2;
     const startTopY = feetY - 161; // svg intrinsic height
     svg.classList.add('gripping');
@@ -462,16 +477,48 @@ class Component extends DCLogic {
       walker.style.transform = 'translate(' + x + 'px,' + y + 'px)';
       svg.style.transform = 'scale(' + s + ')';
       if (p < 1) { this._raf = requestAnimationFrame(step); }
-      else { svg.style.transform = 'scaleX(1)'; this.walkToTree(walker, svg, x1, gY); }
+      else {
+        svg.style.transform = 'scaleX(1)';
+        // Don't make people wait through the walk-to-tree just to get in —
+        // she's landed and the frame's gone, so let them in right away. The
+        // walk/sit/bubble/apple keep playing behind her as a bonus flourish.
+        this.revealText();
+        this.walkToTree(walker, svg, x1, gY);
+      }
     };
     this._raf = requestAnimationFrame(step);
+  }
+
+  revealText() {
+    if (this._textRevealed) return;
+    this._textRevealed = true;
+    const cta = this.ctaRef.current;
+    if (cta) { cta.style.opacity = '1'; cta.style.transform = 'translateY(0)'; cta.style.pointerEvents = 'auto'; }
+    const sub = this.sublineRef.current;
+    if (sub) { sub.style.opacity = '1'; sub.style.transform = 'translateY(0)'; }
+  }
+
+  // A little easter egg — click her for a hop. Only responds once she's not
+  // already mid-scripted-movement, so it can't stomp on the intro sequence.
+  hop() {
+    const walker = this.walkerRef.current;
+    const wrap = this.toonWrapRef.current;
+    const svg = walker ? walker.querySelector('svg') : null;
+    if (!wrap || !svg) return;
+    if (['walking', 'jumping', 'pulling', 'gripping'].some(c => svg.classList.contains(c))) return;
+    wrap.classList.remove('toon-hopping');
+    void wrap.offsetWidth; // reflow so the animation restarts on repeat clicks
+    wrap.classList.add('toon-hopping');
+    svg.classList.add('jumping');
+    clearTimeout(this._hopT);
+    this._hopT = setTimeout(() => svg.classList.remove('jumping'), 550);
   }
 
   walkToTree(walker, svg, x, y) {
     svg.classList.remove('jumping');
     svg.classList.add('walking');
-    const targetX = 118;
-    const speed = 1.25;
+    const targetX = this._restX;
+    const speed = 4.5;
     const step = () => {
       x -= speed;
       if (x <= targetX) {
@@ -501,10 +548,9 @@ class Component extends DCLogic {
   }
 
   reveal(charX, charY) {
-    const cta = this.ctaRef.current;
-    if (cta) { cta.style.opacity = '1'; cta.style.transform = 'translateY(0)'; cta.style.pointerEvents = 'auto'; }
-    const sub = this.sublineRef.current;
-    if (sub) { sub.style.opacity = '1'; sub.style.transform = 'translateY(0)'; }
+    // cta/subline are already revealed by revealText() right after the jump —
+    // this just handles the speech bubble + falling apple, the flourish that
+    // continues to play once she's sat down at the tree.
     const bubble = this.bubbleRef.current;
     if (bubble) {
       bubble.style.transform = 'translate(' + (charX + 60) + 'px,' + (charY + 6) + 'px)';
@@ -524,7 +570,7 @@ class Component extends DCLogic {
     if (!apple || !tree) return;
     const tr = tree.getBoundingClientRect();
     const sx = tr.left + tr.width * 0.52 - 8;
-    const sy = tr.top + tr.height * 0.30 + window.scrollY;
+    const sy = tr.top + tr.height * 0.30;
     const ex = charX + 44; // her hands / lap
     const ey = charY + 90;
     apple.style.transform = 'translate(' + sx + 'px,' + sy + 'px)';
@@ -609,6 +655,9 @@ class Component extends DCLogic {
       appleRef: this.appleRef,
       wrapperRef: this.wrapperRef,
       footerLinksRef: this.footerLinksRef,
+      toonWrapRef: this.toonWrapRef,
+      treeWrapRef: this.treeWrapRef,
+      hop: () => this.hop(),
       toggle: () => this.toggle(),
     };
   }
