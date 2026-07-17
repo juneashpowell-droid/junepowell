@@ -50,6 +50,8 @@
   .toon.talking .c-mouth{animation:talk 0.26s ease-in-out 5;}
   @keyframes bubblePop{0%{opacity:0;transform:translateY(6px) scale(0.85);}60%{opacity:1;transform:translateY(-2px) scale(1.04);}100%{opacity:1;transform:translateY(0) scale(1);}}
   @keyframes scrollHintBob{0%,100%{transform:translateY(0);}50%{transform:translateY(7px);}}
+  @keyframes scrollHintPoke{0%{transform:translateY(0) rotate(0);}25%{transform:translateY(3px) rotate(-10deg);}55%{transform:translateY(11px) rotate(8deg);}100%{transform:translateY(0) rotate(0);}}
+  .scroll-hint-poked{animation:scrollHintPoke 0.5s cubic-bezier(0.34,1.4,0.5,1) !important;}
   .toon path:not([stroke]):not([stroke-width]),.toon ellipse:not([stroke]),.toon circle:not([stroke]),.toon rect:not([stroke]){stroke:#3a2717;stroke-width:1.5;stroke-linejoin:round;}
   .hero-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease;}
   .hero-slide.active{opacity:1;}
@@ -109,7 +111,9 @@
       <a href="index.html" style="color:#6E543F;">← Cover</a>
       <a href="#about" data-nav-section="about" style="position:relative;color:#4A5850;padding-bottom:3px;">About<span class="nav-underline" style="position:absolute;left:0;bottom:0;height:2px;width:0%;background:#2C5140;"></span></a>
       <a href="#timeline" data-nav-section="timeline" style="position:relative;color:#4A5850;padding-bottom:3px;">Timeline<span class="nav-underline" style="position:absolute;left:0;bottom:0;height:2px;width:0%;background:#2C5140;"></span></a>
+      <a href="#building-givegig" data-nav-section="building-givegig" style="position:relative;color:#4A5850;padding-bottom:3px;">GiveGig<span class="nav-underline" style="position:absolute;left:0;bottom:0;height:2px;width:0%;background:#2C5140;"></span></a>
       <a href="#work" data-nav-section="work" style="position:relative;color:#4A5850;padding-bottom:3px;">Work<span class="nav-underline" style="position:absolute;left:0;bottom:0;height:2px;width:0%;background:#2C5140;"></span></a>
+      <a href="#case-recycling" data-nav-section="case-recycling" style="position:relative;color:#4A5850;padding-bottom:3px;">Case study<span class="nav-underline" style="position:absolute;left:0;bottom:0;height:2px;width:0%;background:#2C5140;"></span></a>
       <a href="#skills" data-nav-section="skills" style="position:relative;color:#4A5850;padding-bottom:3px;">Skills<span class="nav-underline" style="position:absolute;left:0;bottom:0;height:2px;width:0%;background:#2C5140;"></span></a>
       <a href="#education" data-nav-section="education" style="position:relative;color:#4A5850;padding-bottom:3px;">Education<span class="nav-underline" style="position:absolute;left:0;bottom:0;height:2px;width:0%;background:#2C5140;"></span></a>
       <a href="#contact" data-nav-section="contact" style="position:relative;color:#4A5850;padding-bottom:3px;">Contact<span class="nav-underline" style="position:absolute;left:0;bottom:0;height:2px;width:0%;background:#2C5140;"></span></a>
@@ -231,10 +235,19 @@
         </svg>
       </div>
     </div>
+    <div ref="{{ photoHintRef }}" onClick="{{ photoHintClick }}" style="position:absolute;top:6px;right:2%;z-index:6;display:flex;flex-direction:column;align-items:flex-end;gap:2px;opacity:0.85;pointer-events:auto;cursor:pointer;transition:opacity 0.4s ease;">
+      <span class="sans" style="font-family:'Caveat',cursive;font-size:19px;font-weight:500;color:#EDE7D6;letter-spacing:0.02em;">click on me!</span>
+      <div style="transform:rotate(60deg);">
+        <svg ref="{{ photoHintArrowRef }}" width="26" height="42" viewBox="0 0 26 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation:scrollHintBob 1.8s ease-in-out infinite;overflow:visible;">
+          <path d="M13,1 C5,3 3,12 10,15 C17,18 15,27 7,28" stroke="#EDE7D6" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9"></path>
+          <path d="M7,28 L13,39 M13,39 L3,33 M13,39 L20,31" stroke="#EDE7D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+        </svg>
+      </div>
+    </div>
   </div>
-  <div ref="{{ scrollHintRef }}" onClick="{{ scrollHintClick }}" style="position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:15;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:0.85;pointer-events:auto;cursor:pointer;">
+  <div ref="{{ scrollHintRef }}" onClick="{{ scrollHintClick }}" style="position:fixed;right:24px;bottom:20px;z-index:15;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:0.85;pointer-events:auto;cursor:pointer;">
     <span class="sans" style="font-family:'Caveat',cursive;font-size:19px;font-weight:500;color:#EDE7D6;letter-spacing:0.02em;">scroll for more</span>
-    <svg width="26" height="42" viewBox="0 0 26 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation:scrollHintBob 1.8s ease-in-out infinite;overflow:visible;">
+    <svg ref="{{ scrollHintArrowRef }}" width="26" height="42" viewBox="0 0 26 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation:scrollHintBob 1.8s ease-in-out infinite;overflow:visible;">
       <path d="M13,1 C5,3 3,12 10,15 C17,18 15,27 7,28" stroke="#EDE7D6" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9"></path>
       <path d="M7,28 L13,39 M13,39 L3,33 M13,39 L20,31" stroke="#EDE7D6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
     </svg>
@@ -242,19 +255,20 @@
 </section>
 
 <section id="about" data-screen-label="About" style="padding:clamp(72px,10vw,128px) 34px;">
-  <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.6fr);gap:clamp(32px,6vw,90px);align-items:start;">
-    <div>
-      <p style="text-transform:uppercase;letter-spacing:0.24em;font-size:13px;font-weight:600;color:#6E543F;margin:0;">About</p>
-      <div style="margin-top:20px;width:46px;height:2px;background:rgba(34,48,42,0.25);"></div>
-      <figure style="margin:30px 0 0;">
-        <div style="aspect-ratio:3/4.4;border-radius:12px;overflow:hidden;background:#E7E0CE;"><img src="assets/about-camp.jpg" alt="June concentrating on a craft at a picnic table at camp, sunglasses pushed up on her head and a lanyard around her neck" style="width:100%;height:100%;object-fit:cover;object-position:66% 40%;"></div>
-      </figure>
-    </div>
-    <div>
-      <p style="font-size:clamp(22px,2.5vw,29px);line-height:1.5;font-weight:400;margin:0 0 30px;letter-spacing:-0.005em;">Volunteering at a youth homeless facility for years taught me process is just as important as results in the context of on-the-ground service.</p>
-      <p style="font-size:19px;line-height:1.66;color:#3B473F;margin:0 0 22px;max-width:62ch;">My word of 2026 is process. I understand the importance of data-driven results, but believe that we get so overcome by the desire to achieve we forget what it takes to get there. For example,&nbsp;<i>What does it mean to show up for a community?</i>&nbsp;I've shown up in my community in different ways throughout the years, and the most important thing I've taken with me is my commitment to process. While volunteering at Star House, helping students learn to write better, and teaching toddlers English, I remembered the faces and the conversations, not the forms at the end. When process becomes just as valuable as numbers, steady work and compassion take the place of rushed jobs and checking boxes.</p>
-      <p style="font-size:19px;line-height:1.66;color:#3B473F;margin:0;max-width:62ch;">I'm conversational in French, trained to think critically, and my undergraduate thesis was on religious druids (ask me about it sometime). After getting back from teaching abroad and starting to grow new roots in the US, I've become interested in the intersection of service, culture, and AI. <br><br>As a culture studies major, AI was presented as a threat to us in undergrad. At the time, we didn't have the knowledge to see its value. We only saw destruction. After learning more about Claude through Anthropic's courses, I realized AI isn't inherently bad; and as a human being with a phone, I understand its inevitability. What I want to better understand through Claude Corps is how we can use AI to interrogate current nonprofit practices and push service to heights its never before been.&nbsp;</p>
-    </div>
+  <div style="max-width:900px;margin:0 auto;">
+    <p style="text-transform:uppercase;letter-spacing:0.24em;font-size:13px;font-weight:600;color:#6E543F;margin:0;">About</p>
+    <div style="margin-top:20px;width:46px;height:2px;background:rgba(34,48,42,0.25);"></div>
+    <figure style="float:left;width:min(300px,42%);margin:28px 32px 20px 0;">
+      <div style="aspect-ratio:3/4.4;border-radius:12px;overflow:hidden;background:#E7E0CE;"><img src="assets/about-camp.jpg" alt="June concentrating on a craft at a picnic table at camp, sunglasses pushed up on her head and a lanyard around her neck" style="width:100%;height:100%;object-fit:cover;object-position:66% 40%;"></div>
+    </figure>
+    <p style="font-size:clamp(22px,2.5vw,29px);line-height:1.4;font-weight:600;margin:28px 0 26px;letter-spacing:-0.005em;color:#22302A;">My word for 2026 is process.</p>
+    <p style="font-size:19px;line-height:1.66;color:#3B473F;margin:0 0 22px;">In a world obsessed with data-driven outcomes, we often rush to cross the finish line without building the road to get there. Understanding the process of an experience helps build scalable, repeatable results, and it provides us scaffolding for huge projects that at first seem insurmountable. You can't finish the race if you're too scared to start.</p>
+    <p style="font-size:19px;line-height:1.66;color:#3B473F;margin:0 0 22px;">I learned this firsthand while working in community spaces. Whether volunteering at Star House, coaching student writers, or teaching English to French toddlers, it was always the same: focusing on simple, day-to-day interactions allowed me to understand what worked and what didn't.</p>
+    <p style="font-size:19px;line-height:1.66;color:#3B473F;margin:0 0 22px;">In those environments, you cannot simply check a box. Real impact is built on the slow, deliberate process of earning trust. When this trust is valued at the same level as the end result, steady work and compassion takes the place of rushed jobs. For me, success is the joys of small wins, smiling faces, and deep conversation.</p>
+    <p style="font-size:19px;line-height:1.66;color:#3B473F;margin:0 0 22px;">My human-centered approach is shaped by a curious background. I am conversational in French, trained to think critically, and my undergraduate thesis was on religious druids (ask me about that sometime). After returning from teaching abroad and starting to grow new roots in the U.S., I found myself looking for ways to replicate this philosophy of care in my work. That search led me to the intersection of service, culture, and emerging technology.</p>
+    <p style="font-size:19px;line-height:1.66;color:#3B473F;margin:0 0 22px;">After returning to the U.S. and diving into Anthropic's AI Fluency course, I gained a new understanding of AI—it lowers the barrier of entry into new topics, fosters deep research, and rewards the curiosity I've always brought to the table. Most importantly, AI doesn't have to replace human empathy; instead, it can illuminate the possibility of human capability, allowing us to try things we've always dreamed of.</p>
+    <p style="font-size:19px;line-height:1.66;color:#3B473F;margin:0;">I want to explore how we can use AI to interrogate current nonprofit practices. By automating the administrative tasks that prevent nonprofits from achieving goals, we can free up human beings to connect, show up, and support one another in the field. Focusing on the process helps build repeatable, sustainable systems that allow nonprofit work to reach heights its never before been.</p>
+    <div style="clear:both;"></div>
   </div>
 
   <div style="max-width:1160px;margin:clamp(48px,7vw,84px) auto 0;">
@@ -582,7 +596,7 @@
     <span>June Powell — Minneapolis, MN</span>
     <a href="#top" style="color:#7E8C78;" style-hover="color:#9DB08F;">Back to top ↑</a>
   </div>
-  <div style="max-width:1160px;margin:14px auto 0;font-size:12px;color:#5C6A62;text-align:center;">Made by June Powell &amp; Claude Design, polished with Claude Code</div>
+  <div style="max-width:1160px;margin:14px auto 0;font-size:12px;color:#5C6A62;text-align:center;">Made by June Powell &amp; Claude Design, polished with Claude Code, and all em-dashes are my own :)</div>
   <div id="end-walker" ref="{{ endWalkerRef }}" style="position:absolute;right:clamp(16px,7vw,110px);bottom:92px;z-index:6;width:120px;opacity:0;pointer-events:none;will-change:transform;">
     <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
       <div ref="{{ endBubbleRef }}" style="position:absolute;bottom:calc(100% - 6px);right:6px;opacity:0;pointer-events:none;background:#F1E9D6;color:#1B3327;font-family:'EB Garamond',Georgia,serif;font-size:18px;font-style:italic;font-weight:500;letter-spacing:0.01em;padding:8px 16px 9px;border-radius:14px;white-space:nowrap;box-shadow:0 12px 26px -14px rgba(0,0,0,0.55);border:1px solid rgba(110,84,63,0.35);">Thanks for sticking around!<span style="position:absolute;right:18px;top:100%;width:0;height:0;border-left:9px solid transparent;border-right:7px solid transparent;border-top:10px solid #F1E9D6;filter:drop-shadow(0 1px 0 rgba(110,84,63,0.35));"></span></div>
@@ -699,6 +713,9 @@ class Component extends DCLogic {
     this.endBubbleRef = React.createRef();
     this.navLinksRef = React.createRef();
     this.scrollHintRef = React.createRef();
+    this.scrollHintArrowRef = React.createRef();
+    this.photoHintRef = React.createRef();
+    this.photoHintArrowRef = React.createRef();
     this.modalRef = React.createRef();
     this.modalCardRef = React.createRef();
     this.modalImgRef = React.createRef();
@@ -747,6 +764,8 @@ class Component extends DCLogic {
     if(this._spyRaf) cancelAnimationFrame(this._spyRaf);
     window.removeEventListener('scroll', this._onScrollHint);
     if(this._hintRaf) cancelAnimationFrame(this._hintRaf);
+    if(this._pokeT) clearTimeout(this._pokeT);
+    if(this._photoPokeT) clearTimeout(this._photoPokeT);
     const photo = this.photoRef.current;
     if(photo && this._onPhotoClick) photo.removeEventListener('click', this._onPhotoClick);
     document.removeEventListener('keydown', this._onModalKey);
@@ -761,6 +780,9 @@ class Component extends DCLogic {
     modal.style.pointerEvents = 'auto';
     if(card) card.style.transform = 'scale(1)';
     document.body.style.overflow = 'hidden';
+    // The visitor's gotten the message — no need to keep pointing at the photos.
+    const hint = this.photoHintRef.current;
+    if(hint) { hint.style.opacity = '0'; hint.style.pointerEvents = 'none'; }
   }
   closeModal(){
     const modal = this.modalRef.current, card = this.modalCardRef.current;
@@ -792,6 +814,28 @@ class Component extends DCLogic {
   }
   scrollHintClick(){
     window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+    // A little life in the arrow, echoing the cartoon's click-to-hop —
+    // give it a poke instead of just quietly obeying.
+    const arrow = this.scrollHintArrowRef.current;
+    if (arrow) {
+      arrow.classList.remove('scroll-hint-poked');
+      void arrow.offsetWidth; // reflow so repeat clicks restart the animation
+      arrow.classList.add('scroll-hint-poked');
+      clearTimeout(this._pokeT);
+      this._pokeT = setTimeout(() => arrow.classList.remove('scroll-hint-poked'), 520);
+    }
+  }
+  photoHintClick(){
+    // Purely decorative — a poke for fun, same as the scroll hint, but
+    // clicking the actual photos (not this hint) is what opens the modal.
+    const arrow = this.photoHintArrowRef.current;
+    if (arrow) {
+      arrow.classList.remove('scroll-hint-poked');
+      void arrow.offsetWidth;
+      arrow.classList.add('scroll-hint-poked');
+      clearTimeout(this._photoPokeT);
+      this._photoPokeT = setTimeout(() => arrow.classList.remove('scroll-hint-poked'), 520);
+    }
   }
   // Underlines the nav link for whichever section is currently under the
   // header, and grows that underline left-to-right as the user scrolls
@@ -908,7 +952,7 @@ class Component extends DCLogic {
     this._io.observe(sec);
   }
   renderVals(){
-    return { stageRef: this.stageRef, photoRef: this.photoRef, walkerRef: this.walkerRef, bubbleRef: this.bubbleRef, endWalkerRef: this.endWalkerRef, endBubbleRef: this.endBubbleRef, navLinksRef: this.navLinksRef, scrollHintRef: this.scrollHintRef, scrollHintClick: () => this.scrollHintClick(), modalRef: this.modalRef, modalCardRef: this.modalCardRef, modalImgRef: this.modalImgRef, modalCaptionRef: this.modalCaptionRef, closeModal: () => this.closeModal(), stopPropClick: (e) => this.stopPropClick(e) };
+    return { stageRef: this.stageRef, photoRef: this.photoRef, walkerRef: this.walkerRef, bubbleRef: this.bubbleRef, endWalkerRef: this.endWalkerRef, endBubbleRef: this.endBubbleRef, navLinksRef: this.navLinksRef, scrollHintRef: this.scrollHintRef, scrollHintArrowRef: this.scrollHintArrowRef, scrollHintClick: () => this.scrollHintClick(), photoHintRef: this.photoHintRef, photoHintArrowRef: this.photoHintArrowRef, photoHintClick: () => this.photoHintClick(), modalRef: this.modalRef, modalCardRef: this.modalCardRef, modalImgRef: this.modalImgRef, modalCaptionRef: this.modalCaptionRef, closeModal: () => this.closeModal(), stopPropClick: (e) => this.stopPropClick(e) };
   }
 }
 </script>

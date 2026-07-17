@@ -28,7 +28,7 @@
   @keyframes cArmH{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(7deg);}}
   @keyframes cBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
   @keyframes breathe{0%,100%{transform:translateY(0);}50%{transform:translateY(-2px);}}
-  @keyframes hop{0%{transform:translateY(0);}35%{transform:translateY(-24px);}55%{transform:translateY(-24px);}75%{transform:translateY(0) scaleY(0.9);}100%{transform:translateY(0) scaleY(1);}}
+  @keyframes hop{0%{transform:translateY(0);}35%{transform:translateY(-17px);}55%{transform:translateY(-17px);}75%{transform:translateY(0) scaleY(0.9);}100%{transform:translateY(0) scaleY(1);}}
   .toon-hopping{animation:hop 0.55s cubic-bezier(0.34,1.4,0.5,1);}
   .toon .c-leg-l,.toon .c-leg-r,.toon .c-arm-l,.toon .c-arm-r,.toon .c-bob{transition:transform 0.4s ease;}
   .toon.walking .c-bob{animation:cBob 0.5s ease-in-out infinite;}
@@ -226,9 +226,9 @@
     <span style="position:absolute;top:-2px;left:9px;width:7px;height:4px;background:#5F824F;border-radius:60% 0 60% 0;"></span>
   </div>
 
-  <div ref="{{ walkerRef }}" style="position:fixed;left:0;top:0;z-index:1;width:96px;opacity:0;transition:opacity 0.35s ease;pointer-events:none;will-change:transform;">
+  <div ref="{{ walkerRef }}" style="position:fixed;left:0;top:0;z-index:1;width:67px;opacity:0;transition:opacity 0.35s ease;pointer-events:none;will-change:transform;">
     <div ref="{{ toonWrapRef }}" onClick="{{ hop }}" style="position:relative;display:flex;flex-direction:column;align-items:center;cursor:pointer;pointer-events:auto;">
-      <svg class="toon" width="92" viewBox="0 0 120 210" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible;transform-origin:center bottom;">
+      <svg class="toon" width="64" viewBox="0 0 120 210" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible;transform-origin:center bottom;">
         <defs>
           <linearGradient id="cHair" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stop-color="#F2D26E"></stop>
@@ -336,7 +336,7 @@ class Component extends DCLogic {
     this.footerLinksRef = React.createRef();
     this.toonWrapRef = React.createRef();
     this.treeWrapRef = React.createRef();
-    this.W = 96;
+    this.W = 67;
     this._sceneRan = false;
     this._restX = 118;
   }
@@ -379,7 +379,10 @@ class Component extends DCLogic {
     const safeLeft = Math.min(ctaLeft, footerLeft);
     const treeLeft = Math.max(4, safeLeft - treeWidth - 14);
     tree.style.left = treeLeft + 'px';
-    this._restX = Math.max(4, treeLeft + treeWidth * 0.38 - this.W / 2);
+    // The trunk sits roughly in the middle third of the tree's own width;
+    // start her just past it so she reads as sitting beside the trunk,
+    // under the canopy, rather than standing in front of it.
+    this._restX = Math.max(4, treeLeft + treeWidth * 0.6);
   }
 
   componentWillUnmount() {
@@ -416,7 +419,7 @@ class Component extends DCLogic {
     if (a.paused) a.play().catch(() => {}); else a.pause();
   }
 
-  groundY() { return window.innerHeight - 188; }
+  groundY() { return window.innerHeight - 132; }
 
   runScene() {
     this._sceneRan = true;
@@ -434,7 +437,7 @@ class Component extends DCLogic {
     const r = art.getBoundingClientRect();
     const feetY = r.top + r.height * 0.9;
     const startX = r.left + r.width / 2 - this.W / 2;
-    const startTopY = feetY - 161; // svg intrinsic height
+    const startTopY = feetY - 113; // svg intrinsic height
     svg.classList.add('gripping');
     svg.style.transform = 'scale(1.5)';
     walker.style.transform = 'translate(' + startX + 'px,' + startTopY + 'px)';
@@ -468,6 +471,18 @@ class Component extends DCLogic {
       frame.style.animation = 'none';
       void frame.offsetWidth;
       frame.style.opacity = '0';
+      // She took the photo with her — don't leave its empty slot behind.
+      // Collapse the space it held so the bio text and CTA slide up and
+      // land centered where the frame used to be, instead of sitting
+      // below a gap.
+      const h = frame.getBoundingClientRect().height;
+      frame.style.height = h + 'px';
+      frame.style.overflow = 'hidden';
+      void frame.offsetHeight;
+      frame.style.transition = 'opacity 0.8s ease, height 0.6s ease 0.15s, margin 0.6s ease 0.15s';
+      frame.style.height = '0px';
+      frame.style.marginTop = '0px';
+      frame.style.marginBottom = '0px';
     }
     const step = (now) => {
       const p = Math.min(1, (now - t0) / dur);
@@ -539,8 +554,8 @@ class Component extends DCLogic {
     svg.classList.add('sitting');
     svg.style.transform = 'scaleX(1)';
     walker.style.transition = 'transform 0.55s ease';
-    const finalX = x + 14;
-    const finalY = y + 30;
+    const finalX = x + 10;
+    const finalY = y + 21;
     walker.style.transform = 'translate(' + finalX + 'px,' + finalY + 'px)';
     this.lastPos = { x: finalX, y: finalY };
     // Payoff: reveal the entry button, and pop a linked callout beside her.
@@ -553,11 +568,11 @@ class Component extends DCLogic {
     // continues to play once she's sat down at the tree.
     const bubble = this.bubbleRef.current;
     if (bubble) {
-      bubble.style.transform = 'translate(' + (charX + 60) + 'px,' + (charY + 6) + 'px)';
+      bubble.style.transform = 'translate(' + (charX + 42) + 'px,' + (charY + 4) + 'px)';
       // reflow, then rise into place
       requestAnimationFrame(() => {
         bubble.style.opacity = '1';
-        bubble.style.transform = 'translate(' + (charX + 60) + 'px,' + (charY - 4) + 'px)';
+        bubble.style.transform = 'translate(' + (charX + 42) + 'px,' + (charY - 3) + 'px)';
         bubble.style.pointerEvents = 'auto';
       });
     }
@@ -571,8 +586,8 @@ class Component extends DCLogic {
     const tr = tree.getBoundingClientRect();
     const sx = tr.left + tr.width * 0.52 - 8;
     const sy = tr.top + tr.height * 0.30;
-    const ex = charX + 44; // her hands / lap
-    const ey = charY + 90;
+    const ex = charX + 31; // her hands / lap
+    const ey = charY + 63;
     apple.style.transform = 'translate(' + sx + 'px,' + sy + 'px)';
     apple.style.opacity = '1';
     const svg = this.walkerRef.current ? this.walkerRef.current.querySelector('svg') : null;
